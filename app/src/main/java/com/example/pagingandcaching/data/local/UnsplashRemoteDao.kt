@@ -1,10 +1,12 @@
 package com.example.pagingandcaching.data.local
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.pagingandcaching.model.UnsplashRemoteKey
 
+@Dao
 interface UnsplashRemoteDao {
 
     @Query("SELECT * FROM unsplash_remotekey_table WHERE id = :id")

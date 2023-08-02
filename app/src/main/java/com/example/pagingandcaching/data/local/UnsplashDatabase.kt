@@ -9,7 +9,7 @@ import com.example.pagingandcaching.model.UnsplashRemoteKey
 @Database(entities = [UnsplashImage::class, UnsplashRemoteKey::class], version = 1, exportSchema = false )
 abstract class UnsplashDatabase(): RoomDatabase() {
 
-    abstract fun UnsplashDao(): UnsplashImageDao
-    abstract fun UnsplashRemoteDao(): UnsplashRemoteDao
+    abstract fun unsplashDao(): UnsplashImageDao
+    abstract fun unsplashRemoteDao(): UnsplashRemoteDao
 
 }
