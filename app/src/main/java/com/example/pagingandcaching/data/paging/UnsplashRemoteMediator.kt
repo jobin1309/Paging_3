@@ -19,8 +19,8 @@ class UnsplashRemoteMediator @Inject constructor(
     private val unsplashDatabase: UnsplashDatabase
 ) : RemoteMediator<Int, UnsplashImage>() {
 
-    private val unsplashImageDao = unsplashDatabase.unsplashDao()
-    private val unsplashRemoteDao = unsplashDatabase.unsplashRemoteDao()
+    private val unsplashImageDao = unsplashDatabase.unsplashImageDao()
+    private val unsplashRemoteDao = unsplashDatabase.unsplashRemoteKeysDao()
 
 
     override suspend fun load(
@@ -60,27 +60,24 @@ class UnsplashRemoteMediator @Inject constructor(
             val prevPage = if (currentPage == 1) null else currentPage - 1
             val nextPage = if (endOfPaginationReached) null else currentPage + 1
 
-            unsplashDatabase.runInTransaction(Runnable {
 
-                if (loadType == LoadType.REFRESH) {
+            if (loadType == LoadType.REFRESH) {
 
-                    unsplashImageDao.deleteAllImages()
+                unsplashImageDao.deleteAllImages()
 
-                }
-                val keys = response.map { unsplashImage ->
-                    UnsplashRemoteKey(
-                        id = unsplashImage.id,
-                        prevPage = prevPage,
-                        nextPage = nextPage
-                    )
-                }
-                unsplashRemoteDao.addAllRemoteKeys(remoteKeys = keys)
-                unsplashImageDao.addImages(response)
+            }
+            val keys = response.map { unsplashImage ->
+                UnsplashRemoteKey(
+                    id = unsplashImage.id,
+                    prevPage = prevPage,
+                    nextPage = nextPage
+                )
+            }
+            unsplashRemoteDao.addAllRemoteKeys(remoteKeys = keys)
+            unsplashImageDao.addImages(response)
 
-                // If all operations are successful, mark the transaction as successful
-                unsplashDatabase.setTransactionSuccessful()
-
-            })
+            // If all operations are successful, mark the transaction as successful
+            unsplashDatabase.setTransactionSuccessful()
 
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: Exception) {
